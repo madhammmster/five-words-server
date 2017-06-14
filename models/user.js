@@ -12,7 +12,10 @@ var UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  email: String,
+  knownWords: Array
+
 });
 
 // // Execute before each user.save() call
@@ -29,10 +32,10 @@ var UserSchema = new mongoose.Schema({
 // //     // bcrypt.hash(user.password, salt, null, function(err, hash) {
 // //     //   if (err) return callback(err);
 // //     //   user.password = hash;
-      
+
 // //     // });
 
-    
+
 // //   });
 //   callback();
 // });

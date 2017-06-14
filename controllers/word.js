@@ -1,5 +1,6 @@
 // Load required packages
 var Word = require('../models/word');
+var User = require('../models/user');
 
 module.exports = function (passport) {
 
@@ -35,38 +36,58 @@ module.exports = function (passport) {
   };
 
   mod.getFiveWords = function (req, res) {
- 
+
     Word.findRandom().limit(5).exec(function (err, words) {
       if (err)
         res.send(err);
 
       res.json(words);
-    });  
+    });
 
   };
 
   mod.getDailyPackOfWords = function (req, res) {
- 
-    Word.findRandom().limit(5).exec(function (err, words) {      
+
+    Word.findRandom({ nativeWord: { $nin: req.user.knownWords } }, '-_id -random -__v').limit(5).exec(function (err, words) {
       if (err)
-        res.send(err);       
+        res.send(err);
 
-        var idArray = [];
-        for (var index = 0; index < words.length;index++) {
-          var element = words[index];
-          idArray.push(element.nativeWord);
-        }
+      var idArray = [];
+      for (var index = 0; index < words.length; index++) {
+        var element = words[index];
+        idArray.push(element.nativeWord);
+      }
 
-        Word.find({nativeWord: {$nin: idArray}}, function(err, otherWords){
-          var response = {};
+      Word.find({ nativeWord: { $nin: idArray } }, '-_id -random -__v').limit(50).exec( function (err, otherWords) {
+        var response = {};
 
-          response.words = words;
-          response.otherWords = otherWords;
-          
-          res.json(response);
-        })
-      
-    });  
+        response.words = words;
+        response.otherWords = otherWords;
+
+        res.json(response);
+      })
+
+    });
+
+  };
+
+  mod.setKnownWord = function (req, res) {
+    var word = req.body.word;
+    var user = req.user
+
+    User.findById(req.user.id, function (err, user) {
+
+      user.knownWords.push(word);
+
+      user.save(function (err) {
+
+        res.json({
+          message: "word succefully set as known"
+        });
+      });
+
+
+    })
 
   };
 

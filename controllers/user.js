@@ -11,7 +11,8 @@ module.exports = function (passport) {
     mod.postUsers = function (req, res) {
         var user = new User({
             username: req.body.username,
-            password: req.body.password
+            password: req.body.password,
+            email: req.body.email
         });
 
         user.save(function (err) {
@@ -19,6 +20,16 @@ module.exports = function (passport) {
                 res.send(err);
 
             res.json({ message: 'New user added!' });
+        });
+    };    
+
+    // Create endpoint /api/users for GET
+    mod.getUsers = function (req, res) {
+        User.find(function (err, users) {
+            if (err)
+                res.send(err);
+
+            res.json(users);
         });
     };
 
@@ -48,16 +59,6 @@ module.exports = function (passport) {
 
 
 
-    };
-
-    // Create endpoint /api/users for GET
-    mod.getUsers = function (req, res) {
-        User.find(function (err, users) {
-            if (err)
-                res.send(err);
-
-            res.json(users);
-        });
     };
 
     return mod;

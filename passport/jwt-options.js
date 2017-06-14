@@ -3,5 +3,5 @@ var ExtractJwt = passportJWT.ExtractJwt;
 
 module.exports = {
     jwtFromRequest: ExtractJwt.fromAuthHeader(),
-    secretOrKey: 'tasmanianDevil'
+    secretOrKey: 'mojSekretnyKulczyk'
 }
